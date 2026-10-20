@@ -1,0 +1,178 @@
+{
+  "entities": {
+    "Account": {
+      "title": "Account",
+      "description": "An eFootball game account listed for purchase on the marketplace",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Title of the eFootball listing"
+        },
+        "platform": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Target gaming platform"
+        },
+        "collectiveStrength": {
+          "type": "number",
+          "description": "Total team strength"
+        },
+        "divisionPeak": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Highest division achieved"
+        },
+        "price": {
+          "type": "number",
+          "description": "Price in USD"
+        },
+        "coins": {
+          "type": "number",
+          "description": "eFootball Coins balance"
+        },
+        "gp": {
+          "type": "number",
+          "description": "GP currency balance"
+        },
+        "efootballPoints": {
+          "type": "number",
+          "description": "eFootball points balance"
+        },
+        "epicBoosterCount": {
+          "type": "number",
+          "description": "Count of Epic Booster cards"
+        },
+        "konamiIdStatus": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Konami ID link condition"
+        },
+        "formation": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Tactical formation"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Detailed description of the squad"
+        },
+        "createdAt": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "ISO timestamp of creation"
+        }
+      },
+      "required": [
+        "title",
+        "platform",
+        "collectiveStrength",
+        "price"
+      ]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A completed transaction with automated Konami ID handover details",
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Unique order tracking ID"
+        },
+        "accountId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Purchased account ID"
+        },
+        "accountTitle": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Title of the purchased account"
+        },
+        "platform": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Platform of the purchased account"
+        },
+        "price": {
+          "type": "number",
+          "description": "Price paid in USD"
+        },
+        "buyerEmail": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Delivery email of the buyer"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Payment method used (Telebirr or CBE)"
+        },
+        "timestamp": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Timestamp of order creation"
+        }
+      },
+      "required": [
+        "orderId",
+        "accountTitle",
+        "price",
+        "buyerEmail",
+        "paymentMethod"
+      ]
+    },
+    "Profile": {
+      "title": "Profile",
+      "description": "User profile with linked Ethiopian payment accounts",
+      "type": "object",
+      "properties": {
+        "gamerTag": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Display gamer name"
+        },
+        "telebirrPhone": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Linked Telebirr mobile number"
+        },
+        "cbeAccount": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Linked CBE bank account number"
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Timestamp of last profile update"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/accounts/{accountId}": {
+      "schema": "Account",
+      "description": "Marketplace listing documents for eFootball accounts"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Order records and credentials transfer receipts"
+    },
+    "/profiles/{userId}": {
+      "schema": "Profile",
+      "description": "User profile and linked payment settings"
+    },
+    "/pending_accounts/{accountId}": {
+      "schema": "Account",
+      "description": "Seller account submissions awaiting admin review and verification"
+    },
+    "/config/{configId}": {
+      "schema": "Profile",
+      "description": "Escrow and payment administration configuration"
+    }
+  }
+}

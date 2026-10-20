@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Public accounts marketplace catalog (supports 15-min locking, admin approval status)
+    match /accounts/{accountId} {
+      allow read, write: if true;
+    }
+
+    // Pending account submissions awaiting admin review
+    match /pending_accounts/{accountId} {
+      allow read, write: if true;
+    }
+
+    // Orders and automated credential delivery receipts (supports screenshot verification)
+    match /orders/{orderId} {
+      allow read, write: if true;
+    }
+
+    // User profile and linked Ethiopian payment methods
+    match /profiles/{userId} {
+      allow read, write: if true;
+    }
+
+    // Admin Payment configuration (Telebirr and CBE account details)
+    match /config/{configId} {
+      allow read, write: if true;
+    }
+
+    // Connection test document
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
