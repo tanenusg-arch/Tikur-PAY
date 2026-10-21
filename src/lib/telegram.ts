@@ -20,9 +20,9 @@ declare global {
   interface Window {
     Telegram?: {
       WebApp?: {
-        ready: () => void;
-        expand: () => void;
-        close: () => void;
+        ready?: () => void;
+        expand?: () => void;
+        close?: () => void;
         initData?: string;
         initDataUnsafe?: {
           user?: {
@@ -121,8 +121,8 @@ export function getInitialTelegramUser(): TelegramUser {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       try {
-        tg.ready();
-        tg.expand();
+        if (tg.ready) tg.ready();
+        if (tg.expand) tg.expand();
       } catch {
         // Ignore iframe constraints
       }

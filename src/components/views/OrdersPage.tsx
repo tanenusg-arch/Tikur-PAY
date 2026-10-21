@@ -164,15 +164,14 @@ Escrow Verification: Confirmed by Store Admin
                       <div className="text-xs space-y-1">
                         <div className="font-bold text-white">Payment Screenshot Under Admin Review</div>
                         <p className="text-zinc-400 leading-relaxed">
-                          Your Telebirr / CBE payment proof was received. Admin{' '}
-                          <strong className="text-cyan-300">@el_bicho14</strong> verifies transactions in 5-15 minutes. Credentials will automatically unlock below once confirmed.
+                          Your Telebirr / CBE payment proof was received. Admin is verifying your screenshot. Credentials will automatically unlock below once confirmed.
                         </p>
                       </div>
                     </div>
 
                     <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-xs">
                       <span className="text-zinc-400">Verification in progress</span>
-                      <span className="text-cyan-300 font-mono font-semibold">Support: @el_bicho14</span>
+                      <span className="text-cyan-300 font-mono font-semibold">Support: Admin</span>
                     </div>
                   </div>
                 )}

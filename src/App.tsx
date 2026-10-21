@@ -121,8 +121,8 @@ export default function App() {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       try {
-        tg.ready();
-        tg.expand();
+        if (tg.ready) tg.ready();
+        if (tg.expand) tg.expand();
         if (tg.disableVerticalSwipes) {
           tg.disableVerticalSwipes();
         }
@@ -753,7 +753,7 @@ export default function App() {
         activeTab={currentPage}
         onTabChange={(tab) => setCurrentPage(tab)}
         ordersCount={orders.length}
-        isAdmin={currentUser.isAdmin && !isStealthAdmin(currentUser.username)}
+        isAdmin={currentUser.isAdmin}
         adminBadgeCount={adminBadgeTotal}
       />
 

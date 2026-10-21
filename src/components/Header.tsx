@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
             );
           })}
 
-          {currentUser.isAdmin && !isStealthAdmin(currentUser.username) && (
+          {currentUser.isAdmin && (
             <button
               type="button"
               onClick={() => handleNavClick('admin')}
@@ -205,7 +205,7 @@ export const Header: React.FC<HeaderProps> = ({
             );
           })}
 
-          {currentUser.isAdmin && !isStealthAdmin(currentUser.username) && (
+          {currentUser.isAdmin && (
             <button
               type="button"
               onClick={() => handleNavClick('admin')}
