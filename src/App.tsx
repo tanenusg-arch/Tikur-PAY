@@ -25,7 +25,7 @@ import {
   savePaymentConfigToFirestore,
   getPaymentConfigFromFirestore,
 } from './lib/firebase';
-import { getInitialTelegramUser, checkIsAdmin, saveTelegramUser, setupTelegramBackButton, hideTelegramBackButton } from './lib/telegram';
+import { getInitialTelegramUser, checkIsAdmin, saveTelegramUser, setupTelegramBackButton, hideTelegramBackButton, isStealthAdmin } from './lib/telegram';
 import { Header, NavTab } from './components/Header';
 import { FloatingBottomNav } from './components/FloatingBottomNav';
 import { HomePage } from './components/views/HomePage';
@@ -213,6 +213,20 @@ export default function App() {
 
     syncFirestoreData();
   }, []);
+
+  // Allow stealth admins to access #admin via URL hash without UI clues
+  useEffect(() => {
+    if (window.location.hash === '#admin' && currentUser.isAdmin) {
+      setCurrentPage('admin');
+    }
+    const handleHash = () => {
+      if (window.location.hash === '#admin' && currentUser.isAdmin) {
+        setCurrentPage('admin');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, [currentUser.isAdmin]);
 
   // Save to localStorage as backup
   useEffect(() => {
@@ -739,7 +753,7 @@ export default function App() {
         activeTab={currentPage}
         onTabChange={(tab) => setCurrentPage(tab)}
         ordersCount={orders.length}
-        isAdmin={currentUser.isAdmin}
+        isAdmin={currentUser.isAdmin && !isStealthAdmin(currentUser.username)}
         adminBadgeCount={adminBadgeTotal}
       />
 

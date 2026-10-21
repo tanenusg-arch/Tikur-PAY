@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { TelegramUser } from '../types/account';
 import { BRAND } from '../constants/branding';
+import { isStealthAdmin } from '../lib/telegram';
 
 export type NavTab = 'home' | 'shop' | 'orders' | 'profile' | 'admin';
 
@@ -103,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
             );
           })}
 
-          {currentUser.isAdmin && (
+          {currentUser.isAdmin && !isStealthAdmin(currentUser.username) && (
             <button
               type="button"
               onClick={() => handleNavClick('admin')}
@@ -204,7 +205,7 @@ export const Header: React.FC<HeaderProps> = ({
             );
           })}
 
-          {currentUser.isAdmin && (
+          {currentUser.isAdmin && !isStealthAdmin(currentUser.username) && (
             <button
               type="button"
               onClick={() => handleNavClick('admin')}

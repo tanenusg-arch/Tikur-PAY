@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { TelegramUser, PendingAccountSubmission } from '../../types/account';
+import { isStealthAdmin } from '../../lib/telegram';
 
 interface ProfilePageProps {
   currentUser: TelegramUser;
@@ -70,7 +71,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 {currentUser.firstName} {currentUser.lastName || ''}
               </h2>
 
-              {currentUser.isAdmin ? (
+              {currentUser.isAdmin && !isStealthAdmin(currentUser.username) ? (
                 <span className="text-[9px] sm:text-[10px] font-bold text-cyan-300 bg-cyan-500/20 border border-cyan-500/40 px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3 text-cyan-400" /> Store Administrator
                 </span>
@@ -108,7 +109,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
 
-            {currentUser.isAdmin && onNavigateToAdmin && (
+            {currentUser.isAdmin && !isStealthAdmin(currentUser.username) && onNavigateToAdmin && (
               <button
                 type="button"
                 onClick={onNavigateToAdmin}
