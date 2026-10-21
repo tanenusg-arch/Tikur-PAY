@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Search,
-  CheckCircle2,
   Lock,
 } from 'lucide-react';
 import { BRAND } from '../constants/branding';
@@ -21,15 +20,13 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onValuate }) => {
     onExplore(heroSearch.trim() || undefined);
   };
 
-  const quickFilters = ['Messi', 'Vieira', 'Cruyff', '3100+ Strength', 'Under 15,000 ETB'];
-
   return (
     <section className="relative overflow-hidden pt-6 pb-12 sm:pt-10 sm:pb-16 lg:pt-14 lg:pb-18 border-b border-white/[0.08] bg-grid-subtle">
       {/* Dynamic ambient radial lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-amber-500/[0.07] rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute top-1/3 left-1/4 w-[400px] h-[300px] bg-emerald-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8 sm:space-y-10 text-center">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6 sm:space-y-8 text-center">
         {/* Brand Badge with Official Logo */}
         <div className="flex items-center justify-center">
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-2xl bg-white/[0.04] border border-amber-400/30 backdrop-blur-xl shadow-lg shadow-amber-500/5">
@@ -60,7 +57,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onValuate }) => {
         </div>
 
         {/* Central Search Box */}
-        <div className="max-w-xl mx-auto space-y-2.5">
+        <div className="max-w-xl mx-auto">
           <form onSubmit={handleSearchSubmit} className="relative shadow-2xl">
             <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -72,37 +69,19 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onValuate }) => {
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl transition-all cursor-pointer shadow-sm active:scale-95"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 glass-button-primary text-amber-300 font-bold text-xs rounded-xl cursor-pointer"
             >
               Search
             </button>
           </form>
-
-          {/* Quick Filter Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
-            <span className="text-zinc-500 text-[11px] font-medium mr-1">Quick:</span>
-            {quickFilters.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => {
-                  setHeroSearch(tag);
-                  onExplore(tag);
-                }}
-                className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-zinc-300 hover:text-white text-[11px] transition-colors cursor-pointer"
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
         </div>
 
-        {/* Action Buttons (Clean: No redirect links) */}
+        {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
           <button
             type="button"
             onClick={() => onExplore()}
-            className="w-full sm:w-auto px-7 py-3.5 text-sm font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 active:scale-[0.98] rounded-xl transition-all shadow-md shadow-amber-400/20 flex items-center justify-center gap-2 cursor-pointer group"
+            className="w-full sm:w-auto px-7 py-3.5 text-sm font-bold text-amber-300 glass-button-primary rounded-xl flex items-center justify-center gap-2 cursor-pointer group"
           >
             <span>Explore Marketplace</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -111,7 +90,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onValuate }) => {
           <button
             type="button"
             onClick={onValuate}
-            className="w-full sm:w-auto px-6 py-3.5 text-sm font-semibold text-zinc-200 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-xl transition-all cursor-pointer shadow-sm text-center"
+            className="w-full sm:w-auto px-6 py-3.5 text-sm font-semibold text-zinc-200 glass-button rounded-xl text-center cursor-pointer"
           >
             Sell Your Account
           </button>

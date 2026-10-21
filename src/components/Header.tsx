@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   ShieldAlert,
-  Send,
   Plus,
   Menu,
   X,
@@ -40,97 +39,75 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#06080d]/90 backdrop-blur-2xl border-b border-white/[0.08] shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 lg:gap-6 px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+    <header className="sticky top-0 z-40 bg-[#04060b]/90 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 lg:gap-6 px-4 sm:px-6 lg:px-8 py-3">
         {/* Zone 1: Brand Wordmark */}
         <button
           type="button"
           onClick={() => handleNavClick('home')}
-          className="flex items-center gap-2.5 group cursor-pointer shrink-0"
+          className="flex items-center gap-2.5 group cursor-pointer shrink-0 bg-transparent border-0 p-0 text-left"
         >
           <img
             src={BRAND.logoUrl}
             alt={BRAND.name}
             referrerPolicy="no-referrer"
-            className="w-8 h-8 rounded-xl object-cover ring-1 ring-amber-400/40 group-hover:scale-105 transition-all duration-200 shadow-md shadow-amber-500/20"
+            className="w-9 h-9 rounded-xl object-cover ring-1 ring-amber-400/40 group-hover:scale-105 transition-all duration-200 shadow-md shadow-amber-500/20"
           />
-          <span className="font-display font-black tracking-tight text-white text-base sm:text-lg whitespace-nowrap">
-            BICHO <span className="text-amber-400">ACCOUNTS SHOP</span>
+          <span className="font-display font-black tracking-wider text-white text-base sm:text-lg whitespace-nowrap">
+            BICHO <span className="text-amber-400">ACCOUNTS</span>
           </span>
         </button>
 
-        {/* Zone 2: Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 p-1 bg-white/[0.03] border border-white/[0.06] rounded-xl text-xs sm:text-sm font-medium">
-          <button
-            type="button"
-            onClick={() => handleNavClick('home')}
-            className={`px-3 lg:px-3.5 py-1.5 rounded-lg transition-all duration-150 whitespace-nowrap cursor-pointer ${
-              activePage === 'home'
-                ? 'bg-amber-400 text-slate-950 font-bold shadow-sm shadow-amber-400/20'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            Home
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNavClick('shop')}
-            className={`px-3.5 py-1.5 rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer ${
-              activePage === 'shop'
-                ? 'bg-amber-400 text-slate-950 font-bold shadow-sm shadow-amber-400/20'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            Shop
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNavClick('orders')}
-            className={`relative flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer ${
-              activePage === 'orders'
-                ? 'bg-amber-400 text-slate-950 font-bold shadow-sm shadow-amber-400/20'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <span>Orders</span>
-            {ordersCount > 0 && (
-              <span
-                className={`text-[10px] font-mono-num font-bold px-1.5 py-0.2 rounded-full ${
-                  activePage === 'orders'
-                    ? 'bg-slate-950 text-amber-400'
-                    : 'bg-amber-400 text-slate-950'
+        {/* Zone 2: Desktop Navigation Links (Glass Buttons) */}
+        <nav className="hidden md:flex items-center gap-1.5 p-1 bg-white/[0.02] border border-white/[0.06] rounded-2xl">
+          {[
+            { id: 'home', label: 'Home', icon: Home },
+            { id: 'shop', label: 'Marketplace', icon: ShoppingBag },
+            { id: 'orders', label: 'Orders', icon: FileCheck, badge: ordersCount },
+            { id: 'profile', label: 'Profile', icon: User },
+          ].map((tab) => {
+            const isActive = activePage === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleNavClick(tab.id as NavTab)}
+                className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? 'glass-button-primary text-amber-300 font-bold'
+                    : 'glass-button text-zinc-300 hover:text-white'
                 }`}
               >
-                {ordersCount}
-              </span>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNavClick('profile')}
-            className={`px-3.5 py-1.5 rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer ${
-              activePage === 'profile'
-                ? 'bg-amber-400 text-slate-950 font-bold shadow-sm shadow-amber-400/20'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            Profile
-          </button>
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+                {tab.badge !== undefined && tab.badge > 0 && (
+                  <span
+                    className={`text-[10px] font-mono-num font-extrabold px-1.5 py-0.2 rounded-full ${
+                      isActive ? 'bg-amber-400 text-slate-950' : 'bg-amber-400/20 text-amber-300 border border-amber-400/30'
+                    }`}
+                  >
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
 
           {currentUser.isAdmin && (
             <button
               type="button"
               onClick={() => handleNavClick('admin')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activePage === 'admin'
-                  ? 'bg-rose-500 text-white font-bold shadow-sm shadow-rose-500/20'
-                  : 'text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 font-bold'
+                  ? 'bg-rose-500/30 border border-rose-500/60 text-white shadow-lg shadow-rose-500/20'
+                  : 'glass-button text-rose-300 hover:text-rose-200 border-rose-500/30'
               }`}
             >
               <ShieldAlert className="w-3.5 h-3.5" />
               <span>Admin Desk</span>
               {adminBadgeCount > 0 && (
-                <span className="bg-rose-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-mono-num font-bold">
+                <span className="bg-rose-500 text-white text-[10px] px-1.5 py-0.2 rounded-full font-mono-num font-bold">
                   {adminBadgeCount}
                 </span>
               )}
@@ -138,53 +115,47 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </nav>
 
-        {/* Zone 3: Profile & Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* User Pill */}
+        {/* Zone 3: Profile & Actions (Glass Buttons) */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          {/* User Pill Button */}
           <button
             type="button"
             onClick={() => handleNavClick('profile')}
-            className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-xl text-xs transition-all cursor-pointer group"
+            className="glass-button flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer group"
           >
             {currentUser.photoUrl ? (
               <img
                 src={currentUser.photoUrl}
                 alt={currentUser.firstName}
                 referrerPolicy="no-referrer"
-                className="w-5 h-5 rounded-full object-cover ring-1 ring-white/20"
+                className="w-5 h-5 rounded-full object-cover ring-1 ring-amber-400/50"
               />
             ) : (
               <div className="w-5 h-5 rounded-full bg-amber-400/20 text-amber-400 flex items-center justify-center text-[10px] font-bold">
                 <User className="w-3 h-3" />
               </div>
             )}
-            <span className="font-semibold text-zinc-200 hidden sm:inline max-w-[95px] truncate group-hover:text-white">
+            <span className="font-semibold text-zinc-200 hidden sm:inline max-w-[100px] truncate group-hover:text-white">
               {currentUser.username ? `@${currentUser.username}` : currentUser.firstName}
             </span>
-            {currentUser.isAdmin && (
-              <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1 py-0.2 rounded font-bold uppercase">
-                Admin
-              </span>
-            )}
           </button>
 
-          {/* Sell Account Button */}
+          {/* Sell Account Glass Button */}
           <button
             type="button"
             onClick={onOpenSellModal}
-            className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 active:scale-95 rounded-xl transition-all whitespace-nowrap shrink-0 shadow-md shadow-amber-400/20 flex items-center gap-1.5 cursor-pointer"
+            className="glass-button-primary px-4 py-2 text-xs font-bold text-amber-300 rounded-xl transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span className="hidden xs:inline sm:inline">Sell</span>
-            <span className="hidden sm:inline">Account</span>
+            <span>Sell Account</span>
           </button>
 
-          {/* Mobile Menu Toggle Button (md:hidden) */}
+          {/* Mobile Menu Toggle Glass Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
-            className="p-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:bg-white/[0.08] md:hidden cursor-pointer"
+            className="glass-button p-2 rounded-xl text-zinc-300 hover:text-white md:hidden cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -193,82 +164,53 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Dropdown Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/[0.08] bg-[#06080d]/95 backdrop-blur-2xl px-4 py-3 space-y-1 animate-in slide-in-from-top duration-150 shadow-2xl">
-          <button
-            type="button"
-            onClick={() => handleNavClick('home')}
-            className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activePage === 'home'
-                ? 'bg-amber-400 text-slate-950 font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <Home className="w-4 h-4" />
-            <span>Home</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleNavClick('shop')}
-            className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activePage === 'shop'
-                ? 'bg-amber-400 text-slate-950 font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <ShoppingBag className="w-4 h-4" />
-            <span>Shop Accounts</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleNavClick('orders')}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activePage === 'orders'
-                ? 'bg-amber-400 text-slate-950 font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <FileCheck className="w-4 h-4" />
-              <span>Orders Vault</span>
-            </div>
-            {ordersCount > 0 && (
-              <span className="text-[10px] font-mono-num font-bold px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">
-                {ordersCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleNavClick('profile')}
-            className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activePage === 'profile'
-                ? 'bg-amber-400 text-slate-950 font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <User className="w-4 h-4" />
-            <span>Player Profile</span>
-          </button>
+        <div className="md:hidden border-t border-white/[0.08] bg-[#04060b]/98 backdrop-blur-2xl px-4 py-4 space-y-2 animate-in slide-in-from-top duration-200 shadow-2xl">
+          {[
+            { id: 'home', label: 'Home', icon: Home },
+            { id: 'shop', label: 'Marketplace Catalog', icon: ShoppingBag },
+            { id: 'orders', label: 'Orders Vault', icon: FileCheck, badge: ordersCount },
+            { id: 'profile', label: 'Player Profile', icon: User },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activePage === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleNavClick(tab.id as NavTab)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
+                  isActive ? 'glass-button-primary text-amber-300 font-bold' : 'glass-button text-zinc-300 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-4 h-4 text-amber-400" />
+                  <span>{tab.label}</span>
+                </div>
+                {tab.badge !== undefined && tab.badge > 0 && (
+                  <span className="text-[10px] font-mono-num font-bold px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
 
           {currentUser.isAdmin && (
             <button
               type="button"
               onClick={() => handleNavClick('admin')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-colors ${
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 activePage === 'admin'
-                  ? 'bg-rose-500 text-white'
-                  : 'text-rose-400 hover:text-rose-300 hover:bg-rose-500/10'
+                  ? 'bg-rose-500/30 border border-rose-500/60 text-white'
+                  : 'glass-button text-rose-300 hover:text-rose-200'
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <ShieldAlert className="w-4 h-4" />
+              <div className="flex items-center gap-3">
+                <ShieldAlert className="w-4 h-4 text-rose-400" />
                 <span>Admin Desk</span>
               </div>
               {adminBadgeCount > 0 && (
-                <span className="text-[10px] font-mono-num font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white">
+                <span className="text-[10px] font-mono-num font-bold px-2 py-0.5 rounded-full bg-rose-500 text-white">
                   {adminBadgeCount}
                 </span>
               )}

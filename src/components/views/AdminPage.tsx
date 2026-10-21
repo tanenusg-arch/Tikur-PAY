@@ -858,6 +858,24 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                       </span>
                     </div>
 
+                    {order.buyerEmail && (
+                      <div className="flex items-center justify-between p-2.5 bg-amber-400/10 border border-amber-400/25 rounded-xl">
+                        <div>
+                          <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">
+                            New Account Owner Email (Konami Handover):
+                          </span>
+                          <span className="text-white font-mono font-bold text-xs">{order.buyerEmail}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(order.buyerEmail!, `email-${order.orderId}`)}
+                          className="px-2 py-1 text-[10px] font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition-colors cursor-pointer"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between">
                       <span className="text-zinc-400">Payer Name/Phone:</span>
                       <span className="text-white font-semibold">{order.senderNameOrPhone}</span>
@@ -866,14 +884,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     <div className="flex items-center justify-between">
                       <span className="text-zinc-400">Transaction Ref:</span>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-amber-400 font-mono font-bold">{order.transactionRef}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(order.transactionRef, order.orderId)}
-                          className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-                        >
-                          <Copy className="w-3 h-3" />
-                        </button>
+                        <span className="text-amber-400 font-mono font-bold">{order.transactionRef || 'N/A (in screenshot)'}</span>
+                        {order.transactionRef && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(order.transactionRef, order.orderId)}
+                            className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </button>
+                        )}
                       </div>
                     </div>
 

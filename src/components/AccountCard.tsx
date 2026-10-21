@@ -216,7 +216,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
             <button
               type="button"
               onClick={() => onInspect(account)}
-              className="px-3 py-2 text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+              className="glass-button px-3 py-2 text-xs font-semibold text-zinc-300 hover:text-white rounded-xl flex items-center gap-1 cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Inspect</span>
@@ -226,7 +226,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
               <button
                 type="button"
                 disabled
-                className="px-3.5 py-2 text-xs font-bold text-zinc-500 bg-zinc-800/40 border border-white/5 rounded-xl cursor-not-allowed"
+                className="glass-button px-3.5 py-2 text-xs font-bold text-zinc-500 rounded-xl cursor-not-allowed opacity-60"
               >
                 Sold Out
               </button>
@@ -234,7 +234,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
               <button
                 type="button"
                 disabled
-                className="px-3.5 py-2 text-xs font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-xl cursor-not-allowed flex items-center gap-1.5"
+                className="glass-button px-3.5 py-2 text-xs font-bold text-amber-400 rounded-xl cursor-not-allowed flex items-center gap-1.5"
               >
                 <Lock className="w-3.5 h-3.5" />
                 <span>Under Review</span>
@@ -243,7 +243,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
               <button
                 type="button"
                 disabled
-                className="px-3.5 py-2 text-xs font-semibold text-zinc-400 bg-zinc-800/60 border border-white/[0.06] rounded-xl cursor-not-allowed flex items-center gap-1.5 opacity-70"
+                className="glass-button px-3.5 py-2 text-xs font-semibold text-zinc-400 rounded-xl cursor-not-allowed flex items-center gap-1.5 opacity-70"
               >
                 <Lock className="w-3.5 h-3.5 text-rose-400" />
                 <span>Reserved</span>
@@ -252,11 +252,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
               <button
                 type="button"
                 onClick={() => onQuickBuy(account)}
-                className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer ${
-                  isLockedByMe
-                    ? 'bg-amber-400 text-slate-950 hover:bg-amber-300 ring-2 ring-amber-400/50'
-                    : 'text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 active:scale-95 shadow-amber-400/20'
-                }`}
+                className="glass-button-primary px-4 py-2 text-xs font-bold text-amber-300 rounded-xl flex items-center gap-1.5 cursor-pointer"
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 <span>{isLockedByMe ? 'Resume Buy' : 'Buy Now'}</span>

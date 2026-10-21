@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { EfootballAccount, FilterState } from '../../types/account';
 import { AccountCard } from '../AccountCard';
 import { AccountFilters } from '../AccountFilters';
@@ -6,13 +6,9 @@ import {
   Search,
   RotateCcw,
   Plus,
-  ShoppingBag,
   LayoutGrid,
   List,
   ShieldCheck,
-  Eye,
-  Coins,
-  Award,
 } from 'lucide-react';
 
 interface ShopPageProps {
@@ -38,23 +34,55 @@ export const ShopPage: React.FC<ShopPageProps> = ({
 }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
 
+  // Filter and sort accounts dynamically based on search and sort option
+  const filteredAccounts = useMemo(() => {
+    let result = [...accounts];
+
+    // Search filter
+    if (filters.search.trim()) {
+      const q = filters.search.toLowerCase().trim();
+      result = result.filter((acc) => {
+        const titleMatch = acc.title.toLowerCase().includes(q);
+        const descMatch = acc.description?.toLowerCase().includes(q);
+        const formMatch = acc.formation?.toLowerCase().includes(q);
+        const managerMatch = acc.manager?.name?.toLowerCase().includes(q);
+        const starsMatch = acc.topStars?.some((s) => s.name.toLowerCase().includes(q));
+        const xiMatch = acc.startingXI?.some((s) => s.name.toLowerCase().includes(q));
+        return titleMatch || descMatch || formMatch || managerMatch || starsMatch || xiMatch;
+      });
+    }
+
+    // Sort order
+    if (filters.sortBy === 'price-asc') {
+      result.sort((a, b) => (a.priceETB || 0) - (b.priceETB || 0));
+    } else if (filters.sortBy === 'price-desc') {
+      result.sort((a, b) => (b.priceETB || 0) - (a.priceETB || 0));
+    } else if (filters.sortBy === 'strength-desc') {
+      result.sort((a, b) => (b.collectiveStrength || 0) - (a.collectiveStrength || 0));
+    } else if (filters.sortBy === 'coins-desc') {
+      result.sort((a, b) => (b.coins || 0) - (a.coins || 0));
+    }
+
+    return result;
+  }, [accounts, filters.search, filters.sortBy]);
+
   return (
-    <div className="py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 space-y-8 animate-in fade-in duration-200">
+    <div className="py-5 sm:py-10 max-w-7xl mx-auto px-3.5 sm:px-6 space-y-6 sm:space-y-8 animate-in fade-in duration-200">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
         <div>
-          <div className="text-xs font-bold text-amber-400 uppercase tracking-widest">
+          <div className="text-[11px] sm:text-xs font-bold text-amber-400 uppercase tracking-widest">
             Marketplace Catalog
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mt-1">
-            BICHO ACCOUNTS SHOP Catalog
+          <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight mt-0.5 sm:mt-1">
+            BICHO ACCOUNTS SHOP
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-2xl">
-            Browse competition-ready rosters with maxed Epic Boosters and clean Konami ID handover. Instant Telebirr &amp; CBE verification.
+          <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
+            Verified eFootball accounts with instant Konami ID email handover. Protected by Telebirr &amp; CBE escrow.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start md:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           {/* View Mode Toggle */}
           <div className="flex items-center p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl">
             <button
@@ -86,7 +114,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
           <button
             type="button"
             onClick={onOpenSellModal}
-            className="px-4 py-2 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-2 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Sell Account</span>
@@ -98,41 +126,33 @@ export const ShopPage: React.FC<ShopPageProps> = ({
       <AccountFilters
         filters={filters}
         onChange={onFilterChange}
-        totalResults={accounts.length}
+        totalResults={filteredAccounts.length}
       />
 
       {/* Grid or Compact List View */}
-      {accounts.length === 0 ? (
-        <div className="text-center py-16 glass-panel rounded-3xl space-y-4">
+      {filteredAccounts.length === 0 ? (
+        <div className="text-center py-12 sm:py-16 glass-panel rounded-3xl space-y-4 px-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mx-auto text-amber-400">
             <Search className="w-6 h-6 stroke-[2]" />
           </div>
-          <h3 className="text-lg font-bold text-white">No eFootball Accounts Match Your Filter</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white">No eFootball Accounts Found</h3>
           <p className="text-xs text-zinc-400 max-w-md mx-auto">
-            Try widening your team strength range or clearing your search query.
+            {filters.search ? `No accounts match "${filters.search}". Try clearing your search keyword.` : 'No accounts currently listed in this category.'}
           </p>
-          <button
-            type="button"
-            onClick={() =>
-              onFilterChange({
-                search: '',
-                platform: 'Mobile',
-                minStrength: 0,
-                maxPriceETB: 100000,
-                sortBy: 'featured',
-                konamiStatus: 'All',
-                keyPlayer: 'All',
-              })
-            }
-            className="px-4 py-2 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-md shadow-amber-400/20"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset All Filters</span>
-          </button>
+          {filters.search && (
+            <button
+              type="button"
+              onClick={() => onFilterChange({ ...filters, search: '' })}
+              className="px-4 py-2 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-md shadow-amber-400/20"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Clear Search</span>
+            </button>
+          )}
         </div>
       ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-          {accounts.map((account) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {filteredAccounts.map((account) => (
             <AccountCard
               key={account.id}
               account={account}
@@ -146,20 +166,20 @@ export const ShopPage: React.FC<ShopPageProps> = ({
       ) : (
         /* Compact List View for Power Users & Traders */
         <div className="glass-panel rounded-2xl overflow-hidden divide-y divide-white/[0.06]">
-          {accounts.map((account) => {
+          {filteredAccounts.map((account) => {
             const priceETB = account.priceETB || 0;
             return (
               <div
                 key={account.id}
-                className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+                className="p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 hover:bg-white/[0.02] transition-colors"
               >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center font-black text-amber-400 font-mono-num text-sm shrink-0">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center font-black text-amber-400 font-mono-num text-xs sm:text-sm shrink-0">
                     {account.collectiveStrength}
                   </div>
-                  <div className="min-w-0">
-                    <h4 className="text-sm font-bold text-white truncate">{account.title}</h4>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400 mt-0.5">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-xs sm:text-sm font-bold text-white truncate">{account.title}</h4>
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                       <span className="font-semibold text-zinc-300">{account.platform}</span>
                       <span>·</span>
                       <span>{account.formation}</span>
@@ -173,13 +193,13 @@ export const ShopPage: React.FC<ShopPageProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.06]">
-                  <div className="text-right">
-                    <span className="text-base sm:text-lg font-black text-white font-mono-num tabular-nums">
+                <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.06]">
+                  <div className="text-left sm:text-right">
+                    <span className="text-sm sm:text-lg font-black text-white font-mono-num tabular-nums">
                       {priceETB.toLocaleString()}{' '}
                       <span className="text-xs text-amber-400 font-bold font-sans">ETB</span>
                     </span>
-                    <span className="text-[11px] text-zinc-400 block font-mono-num">
+                    <span className="text-[10px] sm:text-[11px] text-zinc-400 block font-mono-num">
                       {account.coins.toLocaleString()} Coins
                     </span>
                   </div>
@@ -188,14 +208,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({
                     <button
                       type="button"
                       onClick={() => onInspect(account)}
-                      className="px-3 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-lg transition-colors cursor-pointer"
+                      className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-lg transition-colors cursor-pointer"
                     >
                       Inspect
                     </button>
                     <button
                       type="button"
                       onClick={() => onQuickBuy(account)}
-                      className="px-4 py-1.5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-lg transition-colors shadow-sm cursor-pointer"
+                      className="px-3.5 sm:px-4 py-1.5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-lg transition-colors shadow-sm cursor-pointer"
                     >
                       Buy Now
                     </button>

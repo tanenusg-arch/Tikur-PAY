@@ -143,8 +143,18 @@ Escrow Verification: Confirmed by Store Admin
                     <span>{order.platform}</span>
                     <span aria-hidden="true" className="text-zinc-600">·</span>
                     <span className="text-amber-400 font-bold font-mono-num">{order.collectiveStrength} PTS</span>
-                    <span aria-hidden="true" className="text-zinc-600">·</span>
-                    <span>TX Ref: {order.transactionRef}</span>
+                    {order.buyerEmail && (
+                      <>
+                        <span aria-hidden="true" className="text-zinc-600">·</span>
+                        <span className="text-amber-300 font-medium">Owner: {order.buyerEmail}</span>
+                      </>
+                    )}
+                    {order.transactionRef && order.transactionRef !== 'Provided in screenshot' && (
+                      <>
+                        <span aria-hidden="true" className="text-zinc-600">·</span>
+                        <span>TX: {order.transactionRef}</span>
+                      </>
+                    )}
                   </div>
                 </div>
 

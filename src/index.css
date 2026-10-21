@@ -3,8 +3,10 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #06080d;
-    color: #f1f5f9;
+    background-color: #04060b;
+    color: #f3f4f6;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
   h1, h2, h3, h4, .font-display {
     font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
@@ -15,26 +17,61 @@
   }
 }
 
-/* Modern glassmorphism & card depth */
+/* Glassmorphism Panels & Cards */
 .glass-panel {
-  background: rgba(13, 17, 23, 0.75);
-  backdrop-filter: blur(16px);
+  background: rgba(13, 17, 28, 0.85);
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-hover {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-panel-hover:hover {
   border-color: rgba(251, 191, 36, 0.35);
-  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 0 20px -2px rgba(251, 191, 36, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.9), 0 0 20px -2px rgba(251, 191, 36, 0.15), inset 0 1px 0 0 rgba(251, 191, 36, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Universal Glassmorphism Buttons */
+.glass-button {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(251, 191, 36, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+.glass-button:active {
+  transform: translateY(0);
+}
+
+.glass-button-primary {
+  background: rgba(251, 191, 36, 0.15);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.15), inset 0 1px 0 rgba(251, 191, 36, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-button-primary:hover {
+  background: rgba(251, 191, 36, 0.28);
+  border-color: rgba(251, 191, 36, 0.75);
+  box-shadow: 0 8px 30px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(251, 191, 36, 0.5);
+  transform: translateY(-1px);
+}
+.glass-button-primary:active {
+  transform: translateY(0);
 }
 
 /* Subtle background grid */
 .bg-grid-subtle {
-  background-size: 32px 32px;
+  background-size: 36px 36px;
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
@@ -42,16 +79,21 @@
 
 /* Custom subtle scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #06080d;
+  background: #04060b;
 }
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #fbbf24;
+}
+
+/* Safe padding utility for Telegram mobile mini apps */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1.5rem);
 }
