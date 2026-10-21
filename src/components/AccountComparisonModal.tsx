@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { EfootballAccount } from '../types/account';
+import { setupTelegramBackButton } from '../lib/telegram';
 import { X, Sparkles, ShoppingCart } from 'lucide-react';
 
 interface AccountComparisonModalProps {
@@ -15,6 +16,21 @@ export const AccountComparisonModal: React.FC<AccountComparisonModalProps> = ({
   onClose,
   onSelectBuy,
 }) => {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    const cleanup = setupTelegramBackButton(onClose);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      cleanup();
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || accounts.length < 2) return null;
 
   const [accA, accB] = accounts;
@@ -32,9 +48,9 @@ export const AccountComparisonModal: React.FC<AccountComparisonModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="p-1.5 text-zinc-400 hover:text-white bg-zinc-800 rounded-lg transition-colors cursor-pointer"
+            className="glass-btn glass-btn-secondary p-1.5 rounded-full"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-zinc-300" />
           </button>
         </div>
 
@@ -49,7 +65,7 @@ export const AccountComparisonModal: React.FC<AccountComparisonModalProps> = ({
                 </span>
                 <h4 className="text-sm font-bold text-white line-clamp-2">{acc.title}</h4>
                 <div className="flex items-baseline justify-between pt-1">
-                  <span className="text-xl font-black text-amber-400 font-mono-num">
+                  <span className="text-xl font-black text-cyan-300 font-mono-num">
                     {(acc.priceETB || (acc.price ? acc.price * 145 : 15000)).toLocaleString()} ETB
                   </span>
                   <button
@@ -58,9 +74,9 @@ export const AccountComparisonModal: React.FC<AccountComparisonModalProps> = ({
                       onClose();
                       onSelectBuy(acc);
                     }}
-                    className="px-3 py-1.5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+                    className="glass-btn glass-btn-emerald px-3 py-1.5 text-xs font-bold"
                   >
-                    <ShoppingCart className="w-3 h-3" />
+                    <ShoppingCart className="w-3.5 h-3.5" />
                     <span>Select</span>
                   </button>
                 </div>

@@ -1,7 +1,7 @@
 import { TelegramUser } from '../types/account';
 
 // Recognized Telegram Admins (case-insensitive)
-export const ADMIN_USERNAMES = ['el_bicho14', 'dev_lecter'];
+export const ADMIN_USERNAMES = ['el_bicho14'];
 
 export function checkIsAdmin(username?: string | null): boolean {
   if (!username) return false;
@@ -40,6 +40,22 @@ declare global {
           hide: () => void;
           onClick: (fn: () => void) => void;
         };
+        BackButton?: {
+          isVisible: boolean;
+          show: () => void;
+          hide: () => void;
+          onClick: (fn: () => void) => void;
+          offClick: (fn: () => void) => void;
+        };
+        viewportHeight?: number;
+        viewportStableHeight?: number;
+        isExpanded?: boolean;
+        disableVerticalSwipes?: () => void;
+        enableClosingConfirmation?: () => void;
+        setHeaderColor?: (color: string) => void;
+        setBackgroundColor?: (color: string) => void;
+        onEvent?: (eventType: string, eventHandler: () => void) => void;
+        offEvent?: (eventType: string, eventHandler: () => void) => void;
         HapticFeedback?: {
           impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
           notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
@@ -51,8 +67,47 @@ declare global {
 }
 
 /**
+ * Attaches a handler to Telegram's native BackButton in Mini Apps.
+ * Returns a cleanup function that detaches the handler and hides the button.
+ */
+export function setupTelegramBackButton(onBack: () => void): () => void {
+  try {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.BackButton) {
+      const bb = window.Telegram.WebApp.BackButton;
+      const handler = () => {
+        try {
+          window.Telegram?.WebApp?.HapticFeedback?.selectionChanged();
+        } catch {}
+        onBack();
+      };
+
+      bb.show();
+      bb.onClick(handler);
+
+      return () => {
+        try {
+          bb.offClick(handler);
+          bb.hide();
+        } catch {}
+      };
+    }
+  } catch (err) {
+    console.warn('Telegram BackButton setup notice:', err);
+  }
+  return () => {};
+}
+
+export function hideTelegramBackButton(): void {
+  try {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.BackButton) {
+      window.Telegram.WebApp.BackButton.hide();
+    }
+  } catch {}
+}
+
+/**
  * Reads real user from Telegram WebApp initData on startup.
- * If username is @dev_lecter or @el_bicho14, they get admin privileges automatically.
+ * If username is @el_bicho14, they get admin privileges automatically.
  */
 export function getInitialTelegramUser(): TelegramUser {
   try {

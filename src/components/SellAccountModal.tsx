@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform, PendingAccountSubmission, TelegramUser } from '../types/account';
+import { setupTelegramBackButton } from '../lib/telegram';
 import {
   X,
   Upload,
   CheckCircle2,
-  Send,
   AlertCircle,
   FileCheck,
   ShieldCheck,
-  Smartphone,
-  Tablet,
-  Monitor,
+  Sparkles,
 } from 'lucide-react';
 
 interface SellAccountModalProps {
@@ -42,6 +40,21 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Sync Telegram native BackButton and Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    const cleanup = setupTelegramBackButton(onClose);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      cleanup();
+    };
+  }, [onClose]);
 
   const handleProofChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -98,20 +111,20 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl bg-[#080c1d] border border-white/15 rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-zinc-900 border-b border-white/[0.08] flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center shrink-0">
+        <div className="p-4 sm:p-5 bg-[#0a0f26] border-b border-white/[0.1] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-cyan-400/10 border border-cyan-400/25 text-cyan-400 flex items-center justify-center shrink-0">
               <FileCheck className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-amber-400 uppercase tracking-widest">
-                Submit Account to Admins for Sale
+              <div className="text-[10px] sm:text-xs font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" /> Submit Account to Admins for Sale
               </div>
-              <h2 className="text-sm sm:text-base font-bold text-white mt-0.5">
-                Admin Escrow & Marketplace Listing Request
+              <h2 className="text-xs sm:text-sm font-bold text-white mt-0.5">
+                Admin Escrow &amp; Marketplace Listing Request
               </h2>
             </div>
           </div>
@@ -119,101 +132,66 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+            className="glass-btn glass-btn-secondary p-1.5 rounded-full"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-zinc-300" />
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-6">
+        {/* Scrollable Form Body */}
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 overscroll-contain">
           {isSubmitted ? (
-            <div className="py-8 text-center space-y-5 animate-in zoom-in-95 duration-200">
-              <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-xl">
+            <div className="py-10 text-center space-y-4">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/10">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-
-              <div className="space-y-2 max-w-md mx-auto">
-                <h3 className="text-xl font-bold text-white">Submission Received by Store Admins</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
-                  Your eFootball account details and squad proof have been submitted to store admins. After approval, it will be published to the live marketplace catalog.
-                </p>
-              </div>
-
-              <div className="p-4 bg-zinc-900 rounded-2xl border border-white/10 max-w-md mx-auto text-left text-xs space-y-2">
-                <div className="flex justify-between text-zinc-400">
-                  <span>Squad Title:</span>
-                  <span className="text-white font-semibold truncate max-w-[200px]">{title}</span>
-                </div>
-                <div className="flex justify-between text-zinc-400">
-                  <span>Asking Price:</span>
-                  <span className="text-amber-400 font-bold font-mono-num">{priceETB.toLocaleString()} ETB</span>
-                </div>
-                <div className="flex justify-between text-zinc-400">
-                  <span>Status:</span>
-                  <span className="text-amber-400 font-medium">Pending Admin Review</span>
-                </div>
-              </div>
-
-              <div className="flex justify-center pt-2">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-6 py-2.5 bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-400/20 cursor-pointer"
-                >
-                  Done & Back to App
-                </button>
-              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-white">Submission Sent for Review</h3>
+              <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
+                Your eFootball squad has been received by our store administrators. We will review your account details, verify credentials status, and list it in the active marketplace catalog.
+              </p>
+              <button
+                type="button"
+                onClick={onClose}
+                className="glass-btn glass-btn-primary px-6 py-2.5 text-xs font-bold"
+              >
+                Close &amp; Check Profile
+              </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Telegram Seller Info */}
-              <div className="p-4 bg-zinc-900/90 border border-white/10 rounded-2xl flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold text-xs">
-                    <Send className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-zinc-400 uppercase block font-semibold">Seller Telegram Account</span>
-                    <span className="text-xs text-white font-bold font-mono">
-                      @{currentUser.username || currentUser.firstName}
-                    </span>
-                  </div>
-                </div>
-
-                <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" /> Auto-Verified
-                </span>
-              </div>
-
-              {/* Form Input Fields */}
-              <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-3">
                 <div>
-                  <label className="text-xs text-zinc-300 font-semibold block mb-1">Squad Title / Headline</label>
+                  <label className="text-xs text-zinc-300 font-semibold block mb-1">
+                    Squad Title <span className="text-rose-400">*</span>
+                  </label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Div 1 Rank 120 Championship Squad · 2015 Big Time Messi, Booster Rummenigge & Cech"
-                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-amber-400"
+                    placeholder="e.g., 3190 Div 1 Beast Squad w/ Big Time Messi &amp; Vieira"
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-cyan-400"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   <div>
-                    <label className="text-xs text-zinc-300 font-semibold block mb-1">Account Sync</label>
-                    <div className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-zinc-200 font-semibold flex items-center gap-2">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Universal Cross-Save</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-zinc-300 font-semibold block mb-1">Collective Strength</label>
+                    <label className="text-xs text-zinc-300 font-semibold block mb-1">
+                      Asking Price (ETB) <span className="text-rose-400">*</span>
+                    </label>
                     <input
                       type="number"
                       required
+                      value={priceETB}
+                      onChange={(e) => setPriceETB(Number(e.target.value))}
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-cyan-300 font-mono-num font-bold focus:border-cyan-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-zinc-300 font-semibold block mb-1">Team Strength</label>
+                    <input
+                      type="number"
                       value={collectiveStrength}
                       onChange={(e) => setCollectiveStrength(Number(e.target.value))}
                       className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-num"
@@ -221,26 +199,12 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="text-xs text-zinc-300 font-semibold block mb-1">Asking Price (ETB Only)</label>
-                    <input
-                      type="number"
-                      required
-                      value={priceETB}
-                      onChange={(e) => setPriceETB(Number(e.target.value))}
-                      placeholder="e.g. 15000"
-                      className="w-full bg-black/60 border border-white/10 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-amber-400 font-bold font-mono-num"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div>
                     <label className="text-xs text-zinc-300 font-semibold block mb-1">Coins</label>
                     <input
                       type="number"
                       value={coins}
                       onChange={(e) => setCoins(Number(e.target.value))}
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-num"
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono-num"
                     />
                   </div>
 
@@ -260,7 +224,7 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
                       type="number"
                       value={epicBoosterCount}
                       onChange={(e) => setEpicBoosterCount(Number(e.target.value))}
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-num"
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-purple-300 font-mono-num font-bold"
                     />
                   </div>
 
@@ -283,24 +247,24 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
                     value={keyPlayers}
                     onChange={(e) => setKeyPlayers(e.target.value)}
                     placeholder="Big Time Messi, Booster Rummenigge, Epic Vieira, Cech"
-                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2 text-xs text-white"
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white"
                   />
                 </div>
 
                 <div>
                   <label className="text-xs text-zinc-300 font-semibold block mb-1">
-                    Upload Squad Screenshot / Roster Proof
+                    Upload Squad Screenshot / Roster Proof <span className="text-rose-400">*</span>
                   </label>
-                  <label className="p-4 border-2 border-dashed border-white/10 hover:border-amber-400/50 rounded-2xl bg-black/40 flex flex-col items-center justify-center cursor-pointer transition-colors">
-                    <Upload className="w-6 h-6 text-amber-400 mb-1" />
+                  <label className="p-3.5 border-2 border-dashed border-white/15 hover:border-cyan-400/50 rounded-2xl bg-black/40 flex flex-col items-center justify-center cursor-pointer transition-colors active:bg-cyan-400/5">
+                    <Upload className="w-5 h-5 text-cyan-400 mb-1" />
                     <span className="text-xs font-semibold text-zinc-300">Click to Upload Roster Proof Image</span>
                     <span className="text-[10px] text-zinc-500">eFootball Game Squad Screenshot</span>
                     <input type="file" accept="image/*" onChange={handleProofChange} className="hidden" />
                   </label>
 
                   {proofPreview && (
-                    <div className="mt-3 relative rounded-2xl overflow-hidden border border-white/10 max-h-48 bg-black">
-                      <img src={proofPreview} alt="Proof preview" className="w-full h-full object-contain" />
+                    <div className="mt-2.5 relative rounded-2xl overflow-hidden border border-white/15 max-h-44 bg-black">
+                      <img src={proofPreview} alt="Proof preview" className="w-full h-full object-contain max-h-44" />
                     </div>
                   )}
                 </div>
@@ -318,25 +282,25 @@ export const SellAccountModal: React.FC<SellAccountModalProps> = ({
               </div>
 
               {errorMsg && (
-                <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2">
+                <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}
 
-              {/* Submit Buttons */}
-              <div className="pt-2 flex items-center justify-end gap-3">
+              {/* Submit Buttons with 100% Glass Buttons */}
+              <div className="pt-2 flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                  className="glass-btn glass-btn-secondary px-4 py-2 text-xs font-semibold"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-6 py-3 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-all shadow-lg shadow-amber-400/20 flex items-center gap-2 cursor-pointer"
+                  className="glass-btn glass-btn-emerald px-5 py-2.5 text-xs font-bold shadow-lg"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Submit to Admins for Approval</span>

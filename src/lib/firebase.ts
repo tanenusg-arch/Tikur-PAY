@@ -212,9 +212,9 @@ export async function deletePendingSubmissionFromFirestore(submissionId: string)
 
 export const DEFAULT_ADMIN_PAYMENT_CONFIG: AdminPaymentConfig = {
   telebirrNumber: '0911234567',
-  telebirrAccountName: 'Dev LecteR / eFootball Escrow',
+  telebirrAccountName: 'Bicho / eFootball Escrow',
   cbeAccountNumber: '1000 4829 1849 2',
-  cbeAccountName: 'Dev LecteR / eFootball Escrow CBE',
+  cbeAccountName: 'Bicho / eFootball Escrow CBE',
   instructions: 'Please transfer the exact ETB amount shown and take a clear screenshot of the confirmation page.',
   updatedAt: new Date().toISOString(),
 };

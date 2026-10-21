@@ -108,7 +108,7 @@ TRANSFER PIN: ${order.credentials.transferCode}
                         <span>Payment Under Review</span>
                       </div>
                       <p className="text-[11px] text-zinc-400">
-                        Admins @Dev_LecteR & @el_bicho14 are verifying your screenshot. Credentials will unlock here shortly.
+                        Admin @el_bicho14 is verifying your screenshot. Credentials will unlock here shortly.
                       </p>
                     </div>
                   ) : (

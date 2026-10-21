@@ -25,7 +25,7 @@ import {
   savePaymentConfigToFirestore,
   getPaymentConfigFromFirestore,
 } from './lib/firebase';
-import { getInitialTelegramUser, checkIsAdmin, saveTelegramUser } from './lib/telegram';
+import { getInitialTelegramUser, checkIsAdmin, saveTelegramUser, setupTelegramBackButton, hideTelegramBackButton } from './lib/telegram';
 import { Header, NavTab } from './components/Header';
 import { FloatingBottomNav } from './components/FloatingBottomNav';
 import { HomePage } from './components/views/HomePage';
@@ -123,9 +123,32 @@ export default function App() {
       try {
         tg.ready();
         tg.expand();
+        if (tg.disableVerticalSwipes) {
+          tg.disableVerticalSwipes();
+        }
+        if (tg.setHeaderColor) {
+          tg.setHeaderColor('#060813');
+        }
+        if (tg.setBackgroundColor) {
+          tg.setBackgroundColor('#060813');
+        }
       } catch {
         // Ignore iframe constraint
       }
+
+      // Sync exact Telegram WebApp viewport stable height to avoid disappearing bottom nav
+      const updateViewportHeight = () => {
+        const height = tg.viewportStableHeight || tg.viewportHeight || window.innerHeight;
+        document.documentElement.style.setProperty('--tg-viewport-stable-height', `${height}px`);
+        document.documentElement.style.setProperty('--tg-viewport-height', `${height}px`);
+      };
+
+      updateViewportHeight();
+      if (tg.onEvent) {
+        tg.onEvent('viewportChanged', updateViewportHeight);
+      }
+      window.addEventListener('resize', updateViewportHeight);
+      window.addEventListener('orientationchange', updateViewportHeight);
       const tgUser = tg.initDataUnsafe?.user;
       if (tgUser && tgUser.id) {
         const username = tgUser.username ? tgUser.username.replace('@', '') : undefined;
@@ -256,6 +279,22 @@ export default function App() {
 
     return () => clearInterval(timer);
   }, [accounts]);
+
+  // Telegram WebApp Native BackButton: Return to 'home' when browsing other views if no modal is active
+  useEffect(() => {
+    if (detailAccount || checkoutAccount || isSellModalOpen || isComparisonModalOpen) {
+      return;
+    }
+
+    if (currentPage !== 'home') {
+      const cleanup = setupTelegramBackButton(() => {
+        setCurrentPage('home');
+      });
+      return cleanup;
+    } else {
+      hideTelegramBackButton();
+    }
+  }, [currentPage, detailAccount, checkoutAccount, isSellModalOpen, isComparisonModalOpen]);
 
   // 15-Minute Reservation Lock Handler
   const handleInitiateBuy = async (account: EfootballAccount) => {
@@ -597,7 +636,7 @@ export default function App() {
   const adminBadgeTotal = pendingSubmissions.length + pendingAdminOrdersCount;
 
   return (
-    <div className="min-h-screen bg-[#06080d] text-zinc-100 flex flex-col font-sans selection:bg-amber-400 selection:text-slate-950 pb-24 sm:pb-16">
+    <div className="h-full h-[var(--tg-viewport-stable-height,100dvh)] max-h-[var(--tg-viewport-stable-height,100dvh)] w-full flex flex-col overflow-hidden bg-sports-ambient text-zinc-100 font-sans selection:bg-cyan-400 selection:text-slate-950">
       {/* Header */}
       <Header
         currentUser={currentUser}
@@ -610,90 +649,92 @@ export default function App() {
 
       {/* Lock Notice Toast */}
       {lockNotice && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md p-4 bg-rose-950/90 border border-rose-500/40 rounded-2xl shadow-2xl text-rose-200 text-xs font-semibold flex items-center gap-3 animate-in slide-in-from-top duration-200">
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md p-3.5 bg-rose-950/90 border border-rose-500/40 rounded-2xl shadow-2xl text-rose-200 text-xs font-semibold flex items-center gap-3 animate-in slide-in-from-top duration-200">
           <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
           <span>{lockNotice}</span>
         </div>
       )}
 
-      {/* Main Content Page Navigation View router */}
-      <main className="flex-1">
-        {currentPage === 'home' && (
-          <HomePage
-            featuredAccounts={publicActiveAccounts.filter((a) => a.featured || a.epicBoosterCount >= 8)}
-            onNavigateToShop={(search) => {
-              if (search !== undefined) {
-                setFilters((prev) => ({
-                  ...prev,
-                  search: search || '',
-                  platform: 'Mobile',
-                }));
-              }
-              setCurrentPage('shop');
-            }}
-            onOpenValuation={() => setIsSellModalOpen(true)}
-            onInspect={setDetailAccount}
-            onQuickBuy={handleInitiateBuy}
-            comparedAccountIds={comparedAccountIds}
-            onToggleCompare={handleToggleCompare}
-          />
-        )}
+      {/* Main Content Scrollable Area (Permanently bounds scroll so Bottom Nav never hides) */}
+      <div className="flex-1 overflow-y-auto overscroll-y-contain flex flex-col -webkit-overflow-scrolling-touch">
+        <main className="flex-1">
+          {currentPage === 'home' && (
+            <HomePage
+              featuredAccounts={publicActiveAccounts.filter((a) => a.featured || a.epicBoosterCount >= 8)}
+              onNavigateToShop={(search) => {
+                if (search !== undefined) {
+                  setFilters((prev) => ({
+                    ...prev,
+                    search: search || '',
+                    platform: 'Mobile',
+                  }));
+                }
+                setCurrentPage('shop');
+              }}
+              onOpenValuation={() => setIsSellModalOpen(true)}
+              onInspect={setDetailAccount}
+              onQuickBuy={handleInitiateBuy}
+              comparedAccountIds={comparedAccountIds}
+              onToggleCompare={handleToggleCompare}
+            />
+          )}
 
-        {currentPage === 'shop' && (
-          <ShopPage
-            accounts={publicActiveAccounts}
-            filters={filters}
-            onFilterChange={setFilters}
-            onInspect={setDetailAccount}
-            onQuickBuy={handleInitiateBuy}
-            onOpenSellModal={() => setIsSellModalOpen(true)}
-            comparedAccountIds={comparedAccountIds}
-            onToggleCompare={handleToggleCompare}
-          />
-        )}
+          {currentPage === 'shop' && (
+            <ShopPage
+              accounts={publicActiveAccounts}
+              filters={filters}
+              onFilterChange={setFilters}
+              onInspect={setDetailAccount}
+              onQuickBuy={handleInitiateBuy}
+              onOpenSellModal={() => setIsSellModalOpen(true)}
+              comparedAccountIds={comparedAccountIds}
+              onToggleCompare={handleToggleCompare}
+            />
+          )}
 
-        {currentPage === 'orders' && (
-          <OrdersPage orders={orders} onNavigateToShop={() => setCurrentPage('shop')} />
-        )}
+          {currentPage === 'orders' && (
+            <OrdersPage orders={orders} onNavigateToShop={() => setCurrentPage('shop')} />
+          )}
 
-        {currentPage === 'profile' && (
-          <ProfilePage
-            currentUser={currentUser}
-            ordersCount={orders.length}
-            userSubmissions={userSubmissions}
-            onNavigateToOrders={() => setCurrentPage('orders')}
-            onOpenSellModal={() => setIsSellModalOpen(true)}
-            onNavigateToShop={() => setCurrentPage('shop')}
-            onNavigateToAdmin={() => setCurrentPage('admin')}
-            onUpdateCurrentUser={setCurrentUser}
-          />
-        )}
+          {currentPage === 'profile' && (
+            <ProfilePage
+              currentUser={currentUser}
+              ordersCount={orders.length}
+              userSubmissions={userSubmissions}
+              onNavigateToOrders={() => setCurrentPage('orders')}
+              onOpenSellModal={() => setIsSellModalOpen(true)}
+              onNavigateToShop={() => setCurrentPage('shop')}
+              onNavigateToAdmin={() => setCurrentPage('admin')}
+              onUpdateCurrentUser={setCurrentUser}
+            />
+          )}
 
-        {currentPage === 'admin' && (
-          <AdminPage
-            currentUser={currentUser}
-            pendingSubmissions={pendingSubmissions}
-            orders={orders}
-            accounts={accounts}
-            paymentConfig={paymentConfig}
-            onApproveSubmission={handleApproveSubmission}
-            onRejectSubmission={handleRejectSubmission}
-            onUpdateSubmissionPrice={handleUpdateSubmissionPrice}
-            onApproveOrder={handleApproveOrder}
-            onRejectOrder={handleRejectOrder}
-            onReleaseAccountLock={handleReleaseLock}
-            onDeleteAccount={handleDeleteAccount}
-            onUpdateAccount={handleUpdateAccount}
-            onSavePaymentConfig={handleSavePaymentConfig}
-            onPostNewAccount={handlePostNewAccount}
-          />
-        )}
-      </main>
+          {currentPage === 'admin' && (
+            <AdminPage
+              currentUser={currentUser}
+              pendingSubmissions={pendingSubmissions}
+              orders={orders}
+              accounts={accounts}
+              paymentConfig={paymentConfig}
+              onApproveSubmission={handleApproveSubmission}
+              onRejectSubmission={handleRejectSubmission}
+              onUpdateSubmissionPrice={handleUpdateSubmissionPrice}
+              onApproveOrder={handleApproveOrder}
+              onRejectOrder={handleRejectOrder}
+              onReleaseAccountLock={handleReleaseLock}
+              onDeleteAccount={handleDeleteAccount}
+              onUpdateAccount={handleUpdateAccount}
+              onSavePaymentConfig={handleSavePaymentConfig}
+              onPostNewAccount={handlePostNewAccount}
+            />
+          )}
+        </main>
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer inside scrollable body */}
+        <Footer />
+      </div>
 
-      {/* Floating Bottom Navigation Bar */}
+      {/* Pinned Bottom Navigation Bar (ALWAYS SHOWING ON LOAD WITHOUT SCROLLING) */}
       <FloatingBottomNav
         activeTab={currentPage}
         onTabChange={(tab) => setCurrentPage(tab)}

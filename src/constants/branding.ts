@@ -8,7 +8,7 @@ export const BRAND = {
   logoUrl: bichoLogo,
   cbeSvgUrl: cbeSvg,
   telebirrSvgUrl: telebirrSvg,
-  adminUsernames: ['el_bicho14', 'dev_lecter'],
+  adminUsernames: ['el_bicho14'],
   ownerTelegram: 'https://t.me/el_bicho14',
-  supportTelegram: 'https://t.me/Dev_LecteR',
+  supportTelegram: 'https://t.me/el_bicho14',
 };

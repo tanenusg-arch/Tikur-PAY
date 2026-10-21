@@ -1,6 +1,6 @@
 import React from 'react';
 import { FilterState } from '../types/account';
-import { Search, RotateCcw, X, ChevronDown } from 'lucide-react';
+import { RotateCcw, ChevronDown, SlidersHorizontal } from 'lucide-react';
 
 interface AccountFiltersProps {
   filters: FilterState;
@@ -25,66 +25,61 @@ export const AccountFilters: React.FC<AccountFiltersProps> = ({
     });
   };
 
-  const isFiltered = filters.search !== '' || filters.sortBy !== 'featured';
+  const isFiltered = filters.sortBy !== 'featured';
+
+  const sortOptions = [
+    { id: 'featured', label: 'Featured' },
+    { id: 'strength-desc', label: 'Highest Strength' },
+    { id: 'price-asc', label: 'Price: Low → High' },
+    { id: 'price-desc', label: 'Price: High → Low' },
+    { id: 'coins-desc', label: 'Most Coins' },
+  ];
 
   return (
-    <div className="glass-panel rounded-2xl p-3.5 sm:p-5 shadow-xl space-y-3">
-      {/* Search + Sort Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-        {/* Search Input */}
-        <div className="md:col-span-7 relative">
-          <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search squad by player, formation, or manager..."
-            value={filters.search}
-            onChange={(e) => onChange({ ...filters, search: e.target.value })}
-            className="w-full bg-black/60 border border-white/[0.08] focus:border-amber-400/80 focus:ring-1 focus:ring-amber-400/30 rounded-xl pl-10 pr-9 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 transition-colors"
-          />
-          {filters.search && (
-            <button
-              type="button"
-              onClick={() => onChange({ ...filters, search: '' })}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white cursor-pointer p-1"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
+    <div className="glass-panel rounded-2xl p-3 sm:p-4 shadow-xl space-y-2.5">
+      {/* Sort & Filter Controls Bar (Search Input Removed) */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Quick Sort Options */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+          <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1 shrink-0 mr-1">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Sort:</span>
+          </span>
 
-        {/* Sort Dropdown */}
-        <div className="md:col-span-3 flex items-center gap-2">
-          <label className="text-xs text-zinc-400 shrink-0 font-medium">Sort:</label>
-          <div className="relative w-full">
-            <select
-              value={filters.sortBy}
-              onChange={(e) => onChange({ ...filters, sortBy: e.target.value as FilterState['sortBy'] })}
-              aria-label="Sort accounts"
-              className="w-full bg-black/60 border border-white/[0.08] focus:border-amber-400/80 rounded-xl px-3 py-2.5 text-xs text-zinc-200 transition-colors cursor-pointer appearance-none pr-8"
-            >
-              <option value="featured">Featured / Curated Top Value</option>
-              <option value="strength-desc">Highest Team Strength</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="coins-desc">Most eFootball Coins</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <div className="flex items-center gap-1.5 shrink-0">
+            {sortOptions.map((opt) => {
+              const active = filters.sortBy === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => onChange({ ...filters, sortBy: opt.id as FilterState['sortBy'] })}
+                  className={`glass-btn px-2.5 sm:px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
+                    active
+                      ? 'glass-btn-primary font-bold shadow-md'
+                      : 'glass-btn-secondary text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Results Count & Reset */}
-        <div className="md:col-span-2 flex items-center justify-between md:justify-end gap-3 text-xs">
-          <span className="text-zinc-400 font-mono-num font-medium whitespace-nowrap">
-            <span className="text-amber-400 font-bold">{totalResults}</span> {totalResults === 1 ? 'squad' : 'squads'}
+        {/* Results Counter & Reset Button */}
+        <div className="flex items-center justify-between sm:justify-end gap-2.5 text-xs shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-white/[0.06]">
+          <span className="text-zinc-400 font-mono-num font-medium whitespace-nowrap text-[11px] sm:text-xs">
+            <span className="text-cyan-400 font-bold">{totalResults}</span> {totalResults === 1 ? 'squad' : 'squads'} listed
           </span>
 
           {isFiltered && (
             <button
               type="button"
               onClick={handleReset}
-              className="flex items-center gap-1 text-zinc-300 hover:text-white px-2.5 py-1.5 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] rounded-lg transition-colors cursor-pointer whitespace-nowrap text-xs"
+              className="glass-btn glass-btn-secondary px-2.5 py-1 text-xs font-semibold flex items-center gap-1"
             >
-              <RotateCcw className="w-3 h-3" />
+              <RotateCcw className="w-3 h-3 text-cyan-300" />
               <span>Reset</span>
             </button>
           )}

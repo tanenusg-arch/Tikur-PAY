@@ -479,20 +479,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       </div>
 
       {/* Modern Floating Segmented Navigation Bar */}
-      <div className="p-1.5 bg-zinc-900/90 border border-white/[0.08] rounded-2xl flex items-center gap-1.5 overflow-x-auto scrollbar-none shadow-xl">
+      <div className="p-1.5 bg-black/50 border border-white/[0.08] rounded-2xl flex items-center gap-1.5 overflow-x-auto scrollbar-none shadow-xl backdrop-blur-xl">
         <button
           type="button"
           onClick={() => setActiveTab('submissions')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+          className={`glass-btn px-4 py-2 text-xs transition-all shrink-0 ${
             activeTab === 'submissions'
-              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+              ? 'glass-btn-primary font-bold'
+              : 'glass-btn-secondary text-zinc-400 hover:text-white'
           }`}
         >
           <Clock className="w-3.5 h-3.5" />
           <span>User Submissions</span>
           {pendingSubmissions.length > 0 && (
-            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-mono-num font-extrabold bg-slate-950 text-amber-400">
+            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-mono-num font-extrabold bg-cyan-400 text-slate-950">
               {pendingSubmissions.length}
             </span>
           )}
@@ -501,16 +501,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         <button
           type="button"
           onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+          className={`glass-btn px-4 py-2 text-xs transition-all shrink-0 ${
             activeTab === 'orders'
-              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+              ? 'glass-btn-primary font-bold'
+              : 'glass-btn-secondary text-zinc-400 hover:text-white'
           }`}
         >
           <FileText className="w-3.5 h-3.5" />
           <span>Payment Screenshot Verification</span>
           {pendingOrders.length > 0 && (
-            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-mono-num font-extrabold bg-slate-950 text-amber-400">
+            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-mono-num font-extrabold bg-cyan-400 text-slate-950">
               {pendingOrders.length}
             </span>
           )}
@@ -519,10 +519,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         <button
           type="button"
           onClick={() => setActiveTab('post_account')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+          className={`glass-btn px-4 py-2 text-xs transition-all shrink-0 ${
             activeTab === 'post_account'
-              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+              ? 'glass-btn-primary font-bold'
+              : 'glass-btn-secondary text-zinc-400 hover:text-white'
           }`}
         >
           <Plus className="w-3.5 h-3.5" />
@@ -532,10 +532,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         <button
           type="button"
           onClick={() => setActiveTab('payment_config')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+          className={`glass-btn px-4 py-2 text-xs transition-all shrink-0 ${
             activeTab === 'payment_config'
-              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+              ? 'glass-btn-primary font-bold'
+              : 'glass-btn-secondary text-zinc-400 hover:text-white'
           }`}
         >
           <Settings className="w-3.5 h-3.5" />
@@ -545,16 +545,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         <button
           type="button"
           onClick={() => setActiveTab('locks')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+          className={`glass-btn px-4 py-2 text-xs transition-all shrink-0 ${
             activeTab === 'locks'
-              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+              ? 'glass-btn-primary font-bold'
+              : 'glass-btn-secondary text-zinc-400 hover:text-white'
           }`}
         >
           <Unlock className="w-3.5 h-3.5" />
           <span>15m Reservation Locks</span>
           {lockedAccounts.length > 0 && (
-            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-mono-num font-extrabold bg-slate-950 text-amber-400">
+            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-mono-num font-extrabold bg-cyan-400 text-slate-950">
               {lockedAccounts.length}
             </span>
           )}
@@ -563,10 +563,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         <button
           type="button"
           onClick={() => setActiveTab('inventory')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+          className={`glass-btn px-4 py-2 text-xs transition-all shrink-0 ${
             activeTab === 'inventory'
-              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+              ? 'glass-btn-primary font-bold'
+              : 'glass-btn-secondary text-zinc-400 hover:text-white'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -1405,8 +1405,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
       {/* Modern Screenshot Modal Inspector */}
       {selectedScreenshotUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-150">
-          <div className="relative max-w-3xl w-full bg-zinc-950 border border-white/10 rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+        <div
+          onClick={() => setSelectedScreenshotUrl(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-150 cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-3xl w-full bg-zinc-950 border border-white/10 rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] flex flex-col cursor-default"
+          >
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <span className="text-xs font-bold text-white flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-amber-400" />
